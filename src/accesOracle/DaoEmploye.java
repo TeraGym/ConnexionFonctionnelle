@@ -10,6 +10,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import metier.Adherent;
 import metier.Employe;
 
 /**
@@ -76,6 +77,52 @@ public class DaoEmploye {
         
         pstmt.close();
         return poste;
+    }
+    
+        public Employe lireUnEmploye(int numEmp) throws SQLException {
+        String requete = "select * from EMPLOYE where numeroEmploye = " + numEmp; 
+        PreparedStatement pstmt = cnx.prepareStatement(requete);
+        ResultSet rset = pstmt.executeQuery(requete);
+        Employe temp = null;
+        rset.next();
+           int numEmploye = Integer.parseInt(rset.getString(1));
+            String nomEmploye = rset.getString(2);
+            String prenomEmploye = rset.getString(3);
+            String adresseEmploye = rset.getString(4);
+            String cpEmploye = rset.getString(5);
+            String telEmploye = rset.getString(6);
+            String securiteSocialeEmploye = rset.getString(7);
+            String mdpEmploye = rset.getString(8);
+            int numPoste = Integer.parseInt(rset.getString(9));
+
+//            Employe(numEmploye, nomEmploye, prenomEmploye, adresseEmploye,cpEmploye,telEmploye,securiteSocialeEmploye,poste);
+         temp = new  Employe(numEmploye,nomEmploye,prenomEmploye,adresseEmploye,cpEmploye,telEmploye, securiteSocialeEmploye,mdpEmploye,numPoste);
+        rset.close();
+        
+        return temp;
+     
+ 
+    }//fin lireUnEmploye
+        
+         public void lireAdherentCoach(List<Adherent> LesAdherents, int numero) throws SQLException {
+        String requete = "select * from ADHERENT where numeroemploye = " + numero + " order by numeroadherent";
+        PreparedStatement pstmt = cnx.prepareStatement(requete);
+        ResultSet rset = pstmt.executeQuery(requete);
+        while (rset.next()) {
+            int numAdherent = Integer.parseInt(rset.getString(1));
+            String nomAdherent = rset.getString(2);
+            String prenomAdherent = rset.getString(3);
+            String adresseAdherent = rset.getString(4);
+            String cpAdherent = rset.getString(5);
+            String mdpAdherent = rset.getString(6);
+
+            Adherent temp = new Adherent(numAdherent, nomAdherent, prenomAdherent, adresseAdherent, cpAdherent, mdpAdherent);
+
+            LesAdherents.add(temp);
+
+        }
+        rset.close();
+
     }
 
 }

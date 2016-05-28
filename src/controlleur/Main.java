@@ -79,14 +79,14 @@ public class Main {
                 } catch (Exception ex) {
                     System.out.println("erreur de connexion à la base " + ex.getMessage());
                 }
-
+                int numero=0;
                 FenetreIdentification fensaisie = new FenetreIdentification(null);
                 boolean etat = false;
                 do {
 
                     PasswordAuthentication blocId = fensaisie.recuperer();
                     try {
-                        int numero = Integer.parseInt(blocId.getUserName());
+                        numero = Integer.parseInt(blocId.getUserName());
                         String motDePasse = new String(blocId.getPassword());
 
                         // recuperation du type adhérent ou employé
@@ -125,14 +125,15 @@ public class Main {
                     //test de commit
                 } else if(leType == TypeUtilisateur.Coach){
                     System.out.println("Type Coach");
+                    ModeleTableCoach leModele = new ModeleTableCoach(daoAdh,numero);
+                    FenetreCoach laFenetreCoach;
                     try {
-                         ModeleTableEmploye leModele = new ModeleTableEmploye(daoEmp);
-                         FenetreCoach laFenetreCoach;
-                         laFenetreCoach =new FenetreCoach(leModele,daoAdh,daoEmp);
-                         laFenetreCoach.setVisible(true);
-                     } catch (SQLException ex) {
-                         Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-                     }
+                        laFenetreCoach =new FenetreCoach(leModele,daoAdh,daoEmp,numero);
+                        laFenetreCoach.setVisible(true);
+                    } catch (SQLException ex) {
+                        Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    
                        }else if(leType == TypeUtilisateur.Hôte){
                           System.out.println("Type Hôte");
                            try {

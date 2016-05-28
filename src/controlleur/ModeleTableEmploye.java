@@ -84,6 +84,8 @@ public class ModeleTableEmploye extends AbstractTableModel {
         //leDaoEmp.lireEmploye(leConteneur);
         
     }
+    
+  
 
     public void supprimer(int numeroLigne) {
         leConteneur.remove(numeroLigne);

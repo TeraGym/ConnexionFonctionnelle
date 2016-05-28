@@ -34,9 +34,7 @@ public class DaoAdherent {
             String adresseAdherent = rset.getString(4);
             String cpAdherent = rset.getString(5);
             String mdpAdherent = rset.getString(6);
-            
-            
-            
+
             Adherent temp = new Adherent(numAdherent,nomAdherent,prenomAdherent,adresseAdherent,cpAdherent,mdpAdherent);
             
             LesAdherents.add(temp);
@@ -54,6 +52,67 @@ public class DaoAdherent {
         boolean resultat = rset.next();
         pstmt.close();
         return resultat;
+    }
+      public Adherent lireUnAdherentCoach(int numero,int numEmp) throws SQLException {
+        String requete = "select * from ADHERENT where numeroAdherent = " + numero + "and numeroEmploye = "+numEmp;
+        PreparedStatement pstmt = cnx.prepareStatement(requete);
+        ResultSet rset = pstmt.executeQuery(requete);
+        Adherent temp;
+        rset.next();
+        int numAdherent = Integer.parseInt(rset.getString(1));
+        String nomAdherent = rset.getString(2);
+        String prenomAdherent = rset.getString(3);
+        String adresseAdherent = rset.getString(4);
+        String cpAdherent = rset.getString(5);
+        String mdpAdherent = rset.getString(6);
+
+        temp = new Adherent(numAdherent, nomAdherent, prenomAdherent, adresseAdherent, cpAdherent, mdpAdherent);
+
+        rset.close();
+        return temp;
+    }
+      
+//     public void lireAdherenCoach(List<Adherent> LesAdherents, int numero) throws SQLException {
+//        String requete = "select * from ADHERENT where numeroemploye = " + numero + " order by numeroadherent";
+//        PreparedStatement pstmt = cnx.prepareStatement(requete);
+//        ResultSet rset = pstmt.executeQuery(requete);
+//        while (rset.next()) {
+//            int numAdherent = Integer.parseInt(rset.getString(1));
+//            String nomAdherent = rset.getString(2);
+//            String prenomAdherent = rset.getString(3);
+//            String adresseAdherent = rset.getString(4);
+//            String cpAdherent = rset.getString(5);
+//            String mdpAdherent = rset.getString(6);
+//
+//            Adherent temp = new Adherent(numAdherent, nomAdherent, prenomAdherent, adresseAdherent, cpAdherent, mdpAdherent);
+//
+//            LesAdherents.add(temp);
+//
+//        }
+//        rset.close();
+//
+//    }
+
+   public void lireAdherentCoach(List<Adherent> LesAdherents, int numero) throws SQLException {
+        String requete = "select distinct adh.numeroadherent,adh.nomadherent,adh.prenomadherent,adresseAdherent,cpAdherent,mdpAdherent , tailleprofil from adherent adh, profil pr, EMPLOYE emp where adh.numeroadherent = pr.numeroadherent and pr.numeroemploye = "+ numero+ " order by numeroadherent";
+        
+        PreparedStatement pstmt = cnx.prepareStatement(requete);
+        ResultSet rset = pstmt.executeQuery(requete);
+        while (rset.next()) {
+            int numAdherent = Integer.parseInt(rset.getString(1));
+            String nomAdherent = rset.getString(2);
+            String prenomAdherent = rset.getString(3);
+            String adresseAdherent = rset.getString(4);
+            String cpAdherent = rset.getString(5);
+            String mdpAdherent = rset.getString(6);
+
+            Adherent temp = new Adherent(numAdherent, nomAdherent, prenomAdherent, adresseAdherent, cpAdherent, mdpAdherent);
+
+            LesAdherents.add(temp);
+
+        }
+        rset.close();
+
     }
 }
 
