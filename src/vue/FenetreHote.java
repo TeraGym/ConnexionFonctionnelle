@@ -7,9 +7,15 @@ package vue;
 
 import accesOracle.DaoAdherent;
 import accesOracle.DaoEmploye;
+import accesOracle.DaoAbonnement;
 import controlleur.ModeleTableEmploye;
+import controlleur.ModeleTableHote;
 import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+import metier.Adherent;
+import metier.Abonnement;
 
 /**
  *
@@ -20,22 +26,33 @@ public class FenetreHote extends javax.swing.JFrame {
     /**
      * Creates new form FenetreHote
      */
+     private DaoAbonnement leDaoAbo;
      private DaoEmploye leDaoEmp;
     private DaoAdherent leDaoAdh;
     private ModeleTableEmploye leModele;
+    private Abonnement metierAbo;
+    private int res;
     
 
-    public FenetreHote(ModeleTableEmploye leModele, DaoAdherent daoAdh, DaoEmploye daoEmp) {
-         this.leDaoEmp = daoEmp;
+    public FenetreHote(ModeleTableEmploye leModele, DaoAdherent daoAdh, DaoEmploye daoEmp,DaoAbonnement daoAbo) {
+        int trouve; 
+        this.leDaoEmp = daoEmp;
         this.leDaoAdh = daoAdh;
+        this.leDaoAbo = daoAbo;
         this.leModele = leModele; 
         initComponents();
         
-                try {
-            leModele.charger();
-        } catch (Exception ex) {
-            JOptionPane.showMessageDialog(null, "Chargement impossible", "alerte", JOptionPane.ERROR_MESSAGE);
-        }
+//                try {
+//          trouve =  leModele.trouverAdherent(nomOnglet1.getText(), prenomOnglet1.getText());
+//          if(trouve!=0){
+//              idOnglet1.setText(String.valueOf(trouve));
+//          }
+//            this.pack();
+//            this.setDefaultLookAndFeelDecorated(true);
+//            this.setExtendedState(this.MAXIMIZED_BOTH);
+//        } catch (Exception ex) {
+//            JOptionPane.showMessageDialog(null, "Chargement impossible", "alerte", JOptionPane.ERROR_MESSAGE);
+//        }
     }
 
    
@@ -53,18 +70,19 @@ public class FenetreHote extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
-        jTextField2 = new javax.swing.JTextField();
+        nomOnglet1 = new javax.swing.JTextField();
+        prenomOnglet1 = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
-        jTextField3 = new javax.swing.JTextField();
-        validerOnglet1 = new javax.swing.JToggleButton();
+        idOnglet1 = new javax.swing.JTextField();
+        rechercheIDOnglet1 = new javax.swing.JToggleButton();
         jPanel10 = new javax.swing.JPanel();
         jLabel13 = new javax.swing.JLabel();
         jLabel14 = new javax.swing.JLabel();
-        jTextField13 = new javax.swing.JTextField();
+        abonnementOnglet1 = new javax.swing.JTextField();
         jLabel15 = new javax.swing.JLabel();
-        jTextField14 = new javax.swing.JTextField();
+        dateFinOnglet1 = new javax.swing.JTextField();
         jPanel11 = new javax.swing.JPanel();
+        validerOnglet1 = new javax.swing.JToggleButton();
         jPanel2 = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
 
@@ -74,18 +92,14 @@ public class FenetreHote extends javax.swing.JFrame {
 
         jLabel2.setText("Prénom");
 
-        jTextField1.setText("  ");
-
-        jTextField2.setText("  ");
-
         jLabel3.setText("Identifiant Client ");
 
-        jTextField3.setText("  ");
+        idOnglet1.setText("  ");
 
-        validerOnglet1.setText("Valider");
-        validerOnglet1.addActionListener(new java.awt.event.ActionListener() {
+        rechercheIDOnglet1.setText("recherche Adherent");
+        rechercheIDOnglet1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                validerOnglet1ActionPerformed(evt);
+                rechercheIDOnglet1(evt);
             }
         });
 
@@ -95,11 +109,11 @@ public class FenetreHote extends javax.swing.JFrame {
 
         jLabel14.setText("Abonnement");
 
-        jTextField13.setText(" ");
+        abonnementOnglet1.setText(" ");
 
         jLabel15.setText("Date Fin Abonnement");
 
-        jTextField14.setText(" ");
+        dateFinOnglet1.setText(" ");
 
         javax.swing.GroupLayout jPanel11Layout = new javax.swing.GroupLayout(jPanel11);
         jPanel11.setLayout(jPanel11Layout);
@@ -127,11 +141,11 @@ public class FenetreHote extends javax.swing.JFrame {
                             .addGroup(jPanel10Layout.createSequentialGroup()
                                 .addComponent(jLabel14)
                                 .addGap(43, 43, 43)
-                                .addComponent(jTextField13, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(abonnementOnglet1, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(jPanel10Layout.createSequentialGroup()
                                 .addComponent(jLabel15)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(jTextField14, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                                .addComponent(dateFinOnglet1, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)))))
                 .addContainerGap(48, Short.MAX_VALUE))
         );
         jPanel10Layout.setVerticalGroup(
@@ -144,14 +158,21 @@ public class FenetreHote extends javax.swing.JFrame {
                     .addGroup(jPanel10Layout.createSequentialGroup()
                         .addGroup(jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel14)
-                            .addComponent(jTextField13, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(abonnementOnglet1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(35, 35, 35)
                         .addGroup(jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel15)
-                            .addComponent(jTextField14, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(dateFinOnglet1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addComponent(jPanel11, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(37, Short.MAX_VALUE))
+                .addContainerGap(33, Short.MAX_VALUE))
         );
+
+        validerOnglet1.setText("Valider");
+        validerOnglet1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                validerOnglet1ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -167,16 +188,20 @@ public class FenetreHote extends javax.swing.JFrame {
                             .addComponent(jLabel2))
                         .addGap(28, 28, 28)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jTextField1, javax.swing.GroupLayout.DEFAULT_SIZE, 172, Short.MAX_VALUE)
-                            .addComponent(jTextField2))
+                            .addComponent(nomOnglet1, javax.swing.GroupLayout.DEFAULT_SIZE, 172, Short.MAX_VALUE)
+                            .addComponent(prenomOnglet1))
                         .addGap(98, 98, 98)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addComponent(jLabel3)
                                 .addGap(18, 18, 18)
-                                .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, 172, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(validerOnglet1, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(74, Short.MAX_VALUE))
+                                .addComponent(idOnglet1, javax.swing.GroupLayout.PREFERRED_SIZE, 172, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGap(10, 10, 10)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(validerOnglet1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(rechercheIDOnglet1, javax.swing.GroupLayout.DEFAULT_SIZE, 237, Short.MAX_VALUE))))))
+                .addContainerGap(216, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -184,17 +209,23 @@ public class FenetreHote extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(nomOnglet1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel3)
-                    .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(idOnglet1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(18, 18, 18)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel2)
+                            .addComponent(prenomOnglet1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(7, 7, 7)
+                        .addComponent(rechercheIDOnglet1)))
                 .addGap(18, 18, 18)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
-                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(validerOnglet1, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addComponent(jPanel10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+                .addComponent(validerOnglet1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 20, Short.MAX_VALUE)
+                .addComponent(jPanel10, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(26, 26, 26))
         );
 
         jTabbedPane1.addTab("Vérification abo", jPanel1);
@@ -203,11 +234,11 @@ public class FenetreHote extends javax.swing.JFrame {
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 691, Short.MAX_VALUE)
+            .addGap(0, 833, Short.MAX_VALUE)
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 270, Short.MAX_VALUE)
+            .addGap(0, 324, Short.MAX_VALUE)
         );
 
         jTabbedPane1.addTab("tab2", jPanel2);
@@ -216,11 +247,11 @@ public class FenetreHote extends javax.swing.JFrame {
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 691, Short.MAX_VALUE)
+            .addGap(0, 833, Short.MAX_VALUE)
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 270, Short.MAX_VALUE)
+            .addGap(0, 324, Short.MAX_VALUE)
         );
 
         jTabbedPane1.addTab("tab3", jPanel3);
@@ -239,49 +270,56 @@ public class FenetreHote extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void validerOnglet1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_validerOnglet1ActionPerformed
+    private void rechercheIDOnglet1(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rechercheIDOnglet1
+        // int trouve = 0;
+        try {
+             res=leDaoAdh.trouverAdherent(nomOnglet1.getText(),prenomOnglet1.getText());
+              if(res!=0){
+                  idOnglet1.setText(String.valueOf(res));
+                  
+              }
+              
+         } catch (SQLException ex) {
+             Logger.getLogger(FenetreHote.class.getName()).log(Level.SEVERE, null, ex);
+         }
+       /* if(leDaoAdh!= 0){
+            idOnglet1.setText(String.valueOf(trouve));
+        }*/
+    }//GEN-LAST:event_rechercheIDOnglet1
 
+    private void validerOnglet1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_validerOnglet1ActionPerformed
+         
+        try {
+             Abonnement abo=leDaoAbo.validiteAbonnement(metierAbo,res);
+             if(abo.getValidationAbonnement()){
+                      abonnementOnglet1.setText("Valide");
+                  }
+                  dateFinOnglet1.setText(abo.getDateFinAbonnement());
+         } catch (SQLException ex) {
+             Logger.getLogger(FenetreHote.class.getName()).log(Level.SEVERE, null, ex);
+         }
+                  
     }//GEN-LAST:event_validerOnglet1ActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTextField abonnementOnglet1;
+    private javax.swing.JTextField dateFinOnglet1;
+    private javax.swing.JTextField idOnglet1;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel10;
-    private javax.swing.JLabel jLabel11;
-    private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
-    private javax.swing.JLabel jLabel7;
-    private javax.swing.JLabel jLabel8;
-    private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel10;
     private javax.swing.JPanel jPanel11;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
-    private javax.swing.JPanel jPanel4;
-    private javax.swing.JPanel jPanel5;
-    private javax.swing.JPanel jPanel6;
     private javax.swing.JTabbedPane jTabbedPane1;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField10;
-    private javax.swing.JTextField jTextField11;
-    private javax.swing.JTextField jTextField12;
-    private javax.swing.JTextField jTextField13;
-    private javax.swing.JTextField jTextField14;
-    private javax.swing.JTextField jTextField2;
-    private javax.swing.JTextField jTextField3;
-    private javax.swing.JTextField jTextField4;
-    private javax.swing.JTextField jTextField5;
-    private javax.swing.JTextField jTextField6;
-    private javax.swing.JTextField jTextField7;
-    private javax.swing.JTextField jTextField8;
-    private javax.swing.JTextField jTextField9;
+    private javax.swing.JTextField nomOnglet1;
+    private javax.swing.JTextField prenomOnglet1;
+    private javax.swing.JToggleButton rechercheIDOnglet1;
     private javax.swing.JToggleButton validerOnglet1;
     // End of variables declaration//GEN-END:variables
 }

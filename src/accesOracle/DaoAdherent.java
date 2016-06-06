@@ -53,6 +53,25 @@ public class DaoAdherent {
         pstmt.close();
         return resultat;
     }
+    
+       public int trouverAdherent(String nomAdhe, String preAdherent ) throws SQLException {
+        String requete = "select numeroadherent from ADHERENT where nomadherent = '" + nomAdhe + "' and prenomadherent = '" + preAdherent+"'";
+        PreparedStatement pstmt = cnx.prepareStatement(requete);
+        ResultSet rset = pstmt.executeQuery(requete);
+        int numAdherent=0;
+        while(rset.next()){    
+            
+         numAdherent = Integer.parseInt(rset.getString(1));
+//        String nomAdherent = rset.getString(2);
+//        String prenomAdherent = rset.getString(3);
+//        String adresseAdherent = rset.getString(4);
+//        String cpAdherent = rset.getString(5);
+//        String mdpAdherent = rset.getString(6);
+        }
+        rset.close();
+        return numAdherent;
+    }
+       
       public Adherent lireUnAdherentCoach(int numero,int numEmp) throws SQLException {
         String requete = "select * from ADHERENT where numeroAdherent = " + numero + "and numeroEmploye = "+numEmp;
         PreparedStatement pstmt = cnx.prepareStatement(requete);
