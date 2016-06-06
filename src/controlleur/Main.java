@@ -7,6 +7,7 @@ package controlleur;
 
 import accesOracle.DaoAdherent;
 import accesOracle.DaoEmploye;
+import accesOracle.DaoAbonnement;
 import accesOracle.SourceOracle;
 import vue.FenetreAffichage;
 import java.io.FileNotFoundException;
@@ -32,6 +33,7 @@ public class Main {
     //private static DaoEmploye daoEmp;
     private static DaoAdherent daoAdh;
     private static DaoEmploye daoEmp;
+    private static DaoAbonnement daoAbo;
 
     private enum TypeUtilisateur {
 
@@ -75,6 +77,7 @@ public class Main {
                     Connection cnx = SourceOracle.getConnexion();
                     daoAdh = new DaoAdherent(cnx);
                     daoEmp = new DaoEmploye(cnx);
+                    daoAbo = new DaoAbonnement(cnx);
                     System.out.println("connecté");
                 } catch (Exception ex) {
                     System.out.println("erreur de connexion à la base " + ex.getMessage());
@@ -139,7 +142,7 @@ public class Main {
                            try {
                          ModeleTableEmploye leModele = new ModeleTableEmploye(daoEmp);
                          FenetreHote laFenetreHote;
-                         laFenetreHote = new FenetreHote(leModele,daoAdh,daoEmp);
+                         laFenetreHote = new FenetreHote(leModele,daoAdh,daoEmp,daoAbo);
                          laFenetreHote.setVisible(true);
                            } catch(Exception ex){
                                 Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
